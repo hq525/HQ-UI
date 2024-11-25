@@ -43,6 +43,8 @@ const Button: React.FC<ButtonProps> = ({
             classes = classes.concat(["px-5", "py-3", "text-base"])
             break;
         default:
+            // Default to small
+            classes = classes.concat(["px-3", "py-2", "text-sm"])
             break;
     }
     
