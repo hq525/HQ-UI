@@ -1,8 +1,8 @@
 {
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@hq525"
+    "registry": "https://registry.npmjs.org"
   },
-  "name": "hq-ui",
+  "name": "@hq525/hq-ui",
   "version": "1.0.0",
   "description": "",
   "type": "module",
