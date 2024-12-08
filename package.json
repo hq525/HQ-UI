@@ -3,7 +3,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "name": "@hq525/hq-ui",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "",
   "type": "module",
   "main": "dist/index.cjs.js",
