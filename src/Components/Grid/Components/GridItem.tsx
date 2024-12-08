@@ -1,8 +1,5 @@
+import styled from "styled-components";
 import { PropsWithChildren } from "react";
-import { useMediaQuery } from "@hq525/hq-react-hooks";
-import { MOBILE, PORTRAIT_TABLET, LANDSCAPE_TABLET, LAPTOP, DESKTOP } from "../../../constants/breakpoints"
-import classNames from "classnames";
-import "../../../index.css"
 
 // Settings that should be available for every breakpoint
 interface GridItemSettings {
@@ -21,132 +18,108 @@ interface GridItemProps {
   lg?: GridItemSettings;
   xl?: GridItemSettings;
   xxl?: GridItemSettings;
+  colSpan?: number;
+  rowSpan?: number;
+  colStart?: number;
+  colEnd?: number;
+  rowStart?: number;
+  rowEnd?: number;
 }
+
+/**
+Using Styled Components to implement conditional styling.
+For every breakpoint we check if the necessary prop is available and if yes,
+we apply the grid styling.
+**/
+const GridItemContainer = styled.div<GridItemProps>`
+  // Mobile
+  @media (max-width: 600px) {
+    ${({ xs }) => xs?.colSpan && `grid-column: span ${xs.colSpan}`};
+    ${({ xs }) => xs?.rowSpan && `grid-row: span ${xs.rowSpan}`};
+    ${({ xs }) => xs?.colStart && `grid-column-start: ${xs.colStart}`};
+    ${({ xs }) => xs?.colEnd && `grid-column-end: ${xs.colEnd}`};
+    ${({ xs }) => xs?.rowStart && `grid-row-start: ${xs.rowStart}`};
+    ${({ xs }) => xs?.rowEnd && `grid-row-end: ${xs.rowEnd}`};
+  }
+
+  // Portrait Tablets
+  @media (min-width: 600px) {
+    ${({ md }) => md?.colSpan && `grid-column: span ${md.colSpan}`};
+    ${({ md }) => md?.rowSpan && `grid-row: span ${md.rowSpan}`};
+    ${({ md }) => md?.colStart && `grid-column-start: ${md.colStart}`};
+    ${({ md }) => md?.colEnd && `grid-column-end: ${md.colEnd}`};
+    ${({ md }) => md?.rowStart && `grid-row-start: ${md.rowStart}`};
+    ${({ md }) => md?.rowEnd && `grid-row-end: ${md.rowEnd}`};
+  }
+
+  // Landscape Tablets
+  @media (min-width: 768px) {
+    ${({ lg }) => lg?.colSpan && `grid-column: span ${lg.colSpan}`};
+    ${({ lg }) => lg?.rowSpan && `grid-row: span ${lg.rowSpan}`};
+    ${({ lg }) => lg?.colStart && `grid-column-start: ${lg.colStart}`};
+    ${({ lg }) => lg?.colEnd && `grid-column-end: ${lg.colEnd}`};
+    ${({ lg }) => lg?.rowStart && `grid-row-start: ${lg.rowStart}`};
+    ${({ lg }) => lg?.rowEnd && `grid-row-end: ${lg.rowEnd}`};
+  }
+
+  // Laptops
+  @media (min-width: 992px) {
+    ${({ xl }) => xl?.colSpan && `grid-column: span ${xl.colSpan}`};
+    ${({ xl }) => xl?.rowSpan && `grid-row: span ${xl.rowSpan}`};
+    ${({ xl }) => xl?.colStart && `grid-column-start: ${xl.colStart}`};
+    ${({ xl }) => xl?.colEnd && `grid-column-end: ${xl.colEnd}`};
+    ${({ xl }) => xl?.rowStart && `grid-row-start: ${xl.rowStart}`};
+    ${({ xl }) => xl?.rowEnd && `grid-row-end: ${xl.rowEnd}`};
+  }
+
+  // Desktops
+  @media (min-width: 1200px) {
+    ${({ xxl }) => xxl?.colSpan && `grid-column: span ${xxl.colSpan}`};
+    ${({ xxl }) => xxl?.rowSpan && `grid-row: span ${xxl.rowSpan}`};
+    ${({ xxl }) => xxl?.colStart && `grid-column-start: ${xxl.colStart}`};
+    ${({ xxl }) => xxl?.colEnd && `grid-column-end: ${xxl.colEnd}`};
+    ${({ xxl }) => xxl?.rowStart && `grid-row-start: ${xxl.rowStart}`};
+    ${({ xxl }) => xxl?.rowEnd && `grid-row-end: $xxll.rowEnd}`};
+  }
+    
+`;
 
 /** 
 Define the GridItem component which accepts children and puts
 them inside of the GridItemContainer
 **/
 function GridItem({
-    xs,
-    md,
-    lg,
-    xl,
-    xxl,
-    children,
-  }: PropsWithChildren<GridItemProps>) {
+  xs,
+  md,
+  lg,
+  xl,
+  xxl,
+  colSpan,
+  rowSpan,
+  colStart,
+  colEnd,
+  rowStart,
+  rowEnd,
+  children,
+}: PropsWithChildren<GridItemProps>) {
+  return (
+    <GridItemContainer
+      xs={xs}
+      md={md}
+      lg={lg}
+      xl={xl}
+      xxl={xxl}
+      colSpan={colSpan}
+      rowSpan={rowSpan}
+      colStart={colStart}
+      colEnd={colEnd}
+      rowStart={rowStart}
+      rowEnd={rowEnd}
+    >
+      {children}
+    </GridItemContainer>
+  );
+}
 
-    const classes: string[] = ['grid', 'grid-cols-subgrid']
-
-    const isMobile = useMediaQuery(false, MOBILE);
-    const isPortraitTablet = useMediaQuery(true, PORTRAIT_TABLET);
-    const isLandscapeTablet = useMediaQuery(true, LANDSCAPE_TABLET);
-    const isLaptop = useMediaQuery(true, LAPTOP);
-    const isDesktop = useMediaQuery(true, DESKTOP);
-
-    if (isMobile) {
-      if (xs?.colSpan) {
-        classes.push(`col-span-${xs.colSpan}`)
-      }
-      if (xs?.rowSpan) {
-        classes.push(`row-span-${xs.colSpan}`)
-      }
-      if (xs?.colStart) {
-        classes.push(`col-start-${xs.colStart}`)
-      }
-      if (xs?.colEnd) {
-        classes.push(`col-end-${xs.colEnd}`)
-      }
-      if (xs?.rowStart) {
-        classes.push(`row-start-${xs.rowStart}`)
-      }
-      if (xs?.rowEnd) {
-        classes.push(`row-end-${xs.rowEnd}`)
-      }
-    } else if (isDesktop) {
-      if (xxl?.colSpan) {
-        classes.push(`col-span-${xxl.colSpan}`)
-      }
-      if (xxl?.rowSpan) {
-        classes.push(`row-span-${xxl.colSpan}`)
-      }
-      if (xxl?.colStart) {
-        classes.push(`col-start-${xxl.colStart}`)
-      }
-      if (xxl?.colEnd) {
-        classes.push(`col-end-${xxl.colEnd}`)
-      }
-      if (xxl?.rowStart) {
-        classes.push(`row-start-${xxl.rowStart}`)
-      }
-      if (xxl?.rowEnd) {
-        classes.push(`row-end-${xxl.rowEnd}`)
-      }
-    } else if (isLaptop) {
-      if (xl?.colSpan) {
-        classes.push(`col-span-${xl.colSpan}`)
-      }
-      if (xl?.rowSpan) {
-        classes.push(`row-span-${xl.colSpan}`)
-      }
-      if (xl?.colStart) {
-        classes.push(`col-start-${xl.colStart}`)
-      }
-      if (xl?.colEnd) {
-        classes.push(`col-end-${xl.colEnd}`)
-      }
-      if (xl?.rowStart) {
-        classes.push(`row-start-${xl.rowStart}`)
-      }
-      if (xl?.rowEnd) {
-        classes.push(`row-end-${xl.rowEnd}`)
-      }
-    } else if (isLandscapeTablet) {
-      if (lg?.colSpan) {
-        classes.push(`col-span-${lg.colSpan}`)
-      }
-      if (lg?.rowSpan) {
-        classes.push(`row-span-${lg.colSpan}`)
-      }
-      if (lg?.colStart) {
-        classes.push(`col-start-${lg.colStart}`)
-      }
-      if (lg?.colEnd) {
-        classes.push(`col-end-${lg.colEnd}`)
-      }
-      if (lg?.rowStart) {
-        classes.push(`row-start-${lg.rowStart}`)
-      }
-      if (lg?.rowEnd) {
-        classes.push(`row-end-${lg.rowEnd}`)
-      }
-    } else if (isPortraitTablet) {
-      if (md?.colSpan) {
-        classes.push(`col-span-${md.colSpan}`)
-      }
-      if (md?.rowSpan) {
-        classes.push(`row-span-${md.colSpan}`)
-      }
-      if (md?.colStart) {
-        classes.push(`col-start-${md.colStart}`)
-      }
-      if (md?.colEnd) {
-        classes.push(`col-end-${md.colEnd}`)
-      }
-      if (md?.rowStart) {
-        classes.push(`row-start-${md.rowStart}`)
-      }
-      if (md?.rowEnd) {
-        classes.push(`row-end-${md.rowEnd}`)
-      }
-    }
-
-    return (
-      <div className={classNames(classes)}>
-        {children}
-      </div>
-    );
-  }
-  
-  // Export for use in the Grid component
-  export default GridItem;
+// Export for use in the Grid component
+export default GridItem;

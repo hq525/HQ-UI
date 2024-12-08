@@ -1,9 +1,7 @@
 import { PropsWithChildren } from "react";
-import { useMediaQuery } from "@hq525/hq-react-hooks";
-import { MOBILE, PORTRAIT_TABLET, LANDSCAPE_TABLET, LAPTOP, DESKTOP } from "../../constants/breakpoints"
-import classNames from "classnames";
+import styled from "styled-components";
 
-// Import the GridItem component that we just created
+// Import the GridItem component
 import GridItem from "./Components/GridItem";
 
 // Settings that should be available for every breakpoint
@@ -26,109 +24,96 @@ interface GridContainerProps {
   gapY?: string;
 }
 
+/**
+Using styled components to implement conditional styling.
+For every breakpoint we check if the necessary prop is available and if yes,
+we apply the grid styling. If no breakpoint-specific values are applied,
+apply the fallback, if available.
+**/
+const GridContainer = styled.div<GridContainerProps>`
+  display: grid;
+  height: 100%;
+
+  // Fallback if no breakpoint-specific values have been set
+  ${({ cols }) => cols && `grid-template-columns: repeat(${cols}, 1fr);`}
+  ${({ gap }) => gap && `gap: ${gap};`}
+  ${({ gapX }) => gapX && `column-gap: ${gapX};`}
+  ${({ gapY }) => gapY && `row-gap: ${gapY};`}
+
+  // Mobile
+  @media (max-width: 600px) {
+    ${({ xs }) =>
+      xs?.cols && `grid-template-columns: repeat(${xs.cols}, 1fr);`};
+    ${({ xs }) => xs?.gapX && `column-gap: ${xs.gapX};`};
+  }
+
+  // Portrait Tablets
+  @media (min-width: 600px) {
+    ${({ md }) =>
+      md?.cols && `grid-template-columns: repeat(${md.cols}, 1fr);`};
+    ${({ md }) => md?.gapX && `column-gap: ${md.gapX};`};
+  }
+
+  // Landscape Tablets
+  @media (min-width: 768px) {
+    ${({ lg }) =>
+      lg?.cols && `grid-template-columns: repeat(${lg.cols}, 1fr);`};
+    ${({ lg }) => lg?.gapX && `column-gap: ${lg.gapX};`};
+  }
+
+  // Laptops
+  @media (min-width: 992px) {
+    ${({ xl }) =>
+      xl?.cols && `grid-template-columns: repeat(${xl.cols}, 1fr);`};
+    ${({ xl }) => xl?.gapX && `column-gap: ${xl.gapX};`};
+  }
+
+  // Desktops
+  @media (min-width: 1200px) {
+    ${({ xxl }) =>
+      xxl?.cols && `grid-template-columns: repeat(${xxl.cols}, 1fr);`};
+    ${({ xxl }) => xxl?.gapX && `column-gap: ${xxl.gapX};`};
+  }
+`;
+
 /** 
 Define the Grid component which accepts children and puts
 them inside of the GridContainer
 **/
 function Grid({
-    xs,
-    md,
-    lg,
-    xl,
-    xxl,
-    cols,
-    gap,
-    gapX,
-    gapY,
-    children,
-  }: PropsWithChildren<GridContainerProps>) {
+  xs,
+  md,
+  lg,
+  xl,
+  xxl,
+  cols,
+  gap,
+  gapX,
+  gapY,
+  children,
+}: PropsWithChildren<GridContainerProps>) {
+  return (
+    <GridContainer
+      xs={xs}
+      md={md}
+      lg={lg}
+      xl={xl}
+      xxl={xxl}
+      cols={cols}
+      gap={gap}
+      gapX={gapX}
+      gapY={gapY}
+    >
+      {children}
+    </GridContainer>
+  );
+}
 
-    const classes: string[] = ['grid'];
+/** 
+Create a component composition to make GridItem available
+as Grid.Item under the grid component
+**/
+Grid.Item = GridItem;
 
-    const isMobile = useMediaQuery(false, MOBILE);
-    const isPortraitTablet = useMediaQuery(true, PORTRAIT_TABLET);
-    const isLandscapeTablet = useMediaQuery(true, LANDSCAPE_TABLET);
-    const isLaptop = useMediaQuery(true, LAPTOP);
-    const isDesktop = useMediaQuery(true, DESKTOP);
-
-    if (isMobile) {
-        if (xs?.cols) {
-            classes.push(`grid-cols-${xs.cols}`)
-        }
-        if (xs?.gapX) {
-            classes.push(`gap-x-${xs.gapX}`)
-        }
-        if (xs?.gapY) {
-            classes.push(`gap-y-${xs.gapY}`)
-        }
-    } else if (isDesktop) {
-        if (xxl?.cols) {
-            classes.push(`grid-cols-${xxl.cols}`)
-        }
-        if (xxl?.gapX) {
-            classes.push(`gap-x-${xxl.gapX}`)
-        }
-        if (xxl?.gapY) {
-            classes.push(`gap-y-${xxl.gapY}`)
-        }
-    } else if (isLaptop) {
-        if (xl?.cols) {
-            classes.push(`grid-cols-${xl.cols}`)
-        }
-        if (xl?.gapX) {
-            classes.push(`gap-x-${xl.gapX}`)
-        }
-        if (xl?.gapY) {
-            classes.push(`gap-y-${xl.gapY}`)
-        }
-    } else if (isLandscapeTablet) {
-        if (lg?.cols) {
-            classes.push(`grid-cols-${lg.cols}`)
-        }
-        if (lg?.gapX) {
-            classes.push(`gap-x-${lg.gapX}`)
-        }
-        if (lg?.gapY) {
-            classes.push(`gap-y-${lg.gapY}`)
-        }
-    } else if (isPortraitTablet) {
-        if (md?.cols) {
-            classes.push(`grid-cols-${md.cols}`)
-        }
-        if (md?.gapX) {
-            classes.push(`gap-x-${md.gapX}`)
-        }
-        if (md?.gapY) {
-            classes.push(`gap-y-${md.gapY}`)
-        }
-    }
-
-    // Fallback if no breakpoint-specific values have been set
-    if (cols && ((!xs?.cols && isMobile) || (!md?.cols && isPortraitTablet) || (!lg?.cols && isLandscapeTablet) || (!xl?.cols && isLaptop) || (!xxl?.cols && isDesktop))) {
-        classes.push(`grid-cols-${cols}`)
-    }
-    if (gap) {
-        classes.push(`gap-${gap}`)
-    }
-    if (gapX && ((!xs?.gapX && isMobile) || (!md?.gapX && isPortraitTablet) || (!lg?.gapX && isLandscapeTablet) || (!xl?.gapX && isLaptop) || (!xxl?.gapX && isDesktop))) {
-        classes.push(`gap-x-${gapX}`)
-    }
-    if (gapY && ((!xs?.gapY && isMobile) || (!md?.gapY && isPortraitTablet) || (!lg?.gapY && isLandscapeTablet) || (!xl?.gapY && isLaptop) || (!xxl?.gapY && isDesktop))) {
-        classes.push(`gap-y-${gapY}`)
-    }
-
-    return (
-      <div className={classNames(classes)}>
-        {children}
-      </div>
-    );
-  }
-  
-  /** 
-  Create a component composition to make GridItem available
-  as Grid.Item under the grid component
-  **/
-  Grid.Item = GridItem;
-  
-  // Export for usage of the component in the application
-  export default Grid;
+// Export for usage of the component in the application
+export default Grid;

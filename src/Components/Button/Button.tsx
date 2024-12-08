@@ -1,58 +1,62 @@
 import React, { MouseEventHandler } from "react";
-import classNames from "classnames";
-import "../../index.css"
+import styled from "styled-components";
+import { BTN_PRIMARY, BTN_PRIMARY_HOVER, BTN_WARNING, BTN_WARNING_HOVER } from "../../constants/colors"
 
 export type ButtonProps = {
-    text?: string;
-    primary?: boolean;
-    disabled?: boolean;
-    size?: "small" | "medium" | "large";
-    onClick?: MouseEventHandler<HTMLButtonElement>;
-  };
+  text?: string;
+  primary?: boolean;
+  disabled?: boolean;
+  size?: "small" | "medium" | "large";
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+};
+
+const StyledButton = styled.button<ButtonProps>`
+    border: 0;
+    line-height: 1;
+    font-size: ${(props) =>
+        props.size === "small"
+        ? "12px"
+        : props.size === "medium"
+        ? "14px"
+        : "15px"};
+    cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
+    font-weight: bold;
+    border-radius: 5px;
+    display: inline-block;
+    color: #fff;
+    background-color: ${(props) => (props.primary ? BTN_PRIMARY : BTN_WARNING)};
+    opacity: ${(props) => (props.disabled ? 0.5 : 1)};
+    padding: ${(props) =>
+        props.size === "small"
+        ? "7px 18px 8px"
+        : props.size === "medium"
+        ? "9px 25px 11px"
+        : "14px 30px 16px"};
+    &:hover {
+        background-color: ${(props) => (props.primary ? (props.disabled ?  BTN_PRIMARY : BTN_PRIMARY_HOVER) : (props.disabled ? BTN_WARNING : BTN_WARNING_HOVER))};
+    };
+`;
 
 const Button: React.FC<ButtonProps> = ({
-    size,
-    primary,
-    disabled,
-    text,
-    onClick
-  }) => {
+  size,
+  primary,
+  disabled,
+  text,
+  onClick,
+  ...props
+}) => {
+  return (
+    <StyledButton
+      type="button"
+      onClick={onClick}
+      primary={primary}
+      disabled={disabled}
+      size={size}
+      {...props}
+    >
+      {text}
+    </StyledButton>
+  );
+};
 
-    var classes = ["text-white", "text-center", "font-bold", "rounded"]
-
-    if (primary) {
-        classes = classes.concat(["bg-blue-500"])
-    } else {
-        classes = classes.concat(["bg-red-500"])
-    }
-
-    if (disabled) {
-        classes = classes.concat(["opacity-50", "cursor-not-allowed"])
-    } else {
-        classes = classes.concat([primary ? "hover:bg-blue-700" : "hover:bg-red-700"])
-    }
-
-    switch (size) {
-        case "small":
-            classes = classes.concat(["px-3", "py-2", "text-sm"])
-            break;
-        case "medium":
-            classes = classes.concat(["px-5", "py-2.5", "text-sm"])
-            break;
-        case "large":
-            classes = classes.concat(["px-5", "py-3", "text-base"])
-            break;
-        default:
-            // Default to small
-            classes = classes.concat(["px-3", "py-2", "text-sm"])
-            break;
-    }
-    
-    return (
-        <button type="button" className={classNames(classes)} onClick={onClick}>
-            {text}
-        </button>
-    );
-  };
-  
-  export default Button;
+export default Button;
