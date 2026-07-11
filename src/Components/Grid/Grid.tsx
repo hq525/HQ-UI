@@ -1,6 +1,8 @@
 import { PropsWithChildren } from "react";
 import styled from "styled-components";
 
+import { BREAKPOINTS } from "../../tokens";
+
 // Import the GridItem component
 import GridItem from "./Components/GridItem";
 
@@ -59,7 +61,7 @@ const GridContainer = styled.div<StyledGridContainerProps>`
   ${({ $gapY }) => $gapY && `row-gap: ${gapValue($gapY)};`}
 
   // Mobile
-  @media (max-width: 600px) {
+  @media (max-width: ${BREAKPOINTS.md}px) {
     ${({ $xs }) =>
       $xs?.cols && `grid-template-columns: repeat(${$xs.cols}, 1fr);`};
     ${({ $xs }) => $xs?.gapX && `column-gap: ${gapValue($xs.gapX)};`};
@@ -67,7 +69,7 @@ const GridContainer = styled.div<StyledGridContainerProps>`
   }
 
   // Portrait Tablets
-  @media (min-width: 600px) {
+  @media (min-width: ${BREAKPOINTS.md}px) {
     ${({ $md }) =>
       $md?.cols && `grid-template-columns: repeat(${$md.cols}, 1fr);`};
     ${({ $md }) => $md?.gapX && `column-gap: ${gapValue($md.gapX)};`};
@@ -75,7 +77,7 @@ const GridContainer = styled.div<StyledGridContainerProps>`
   }
 
   // Landscape Tablets
-  @media (min-width: 768px) {
+  @media (min-width: ${BREAKPOINTS.lg}px) {
     ${({ $lg }) =>
       $lg?.cols && `grid-template-columns: repeat(${$lg.cols}, 1fr);`};
     ${({ $lg }) => $lg?.gapX && `column-gap: ${gapValue($lg.gapX)};`};
@@ -83,7 +85,7 @@ const GridContainer = styled.div<StyledGridContainerProps>`
   }
 
   // Laptops
-  @media (min-width: 992px) {
+  @media (min-width: ${BREAKPOINTS.xl}px) {
     ${({ $xl }) =>
       $xl?.cols && `grid-template-columns: repeat(${$xl.cols}, 1fr);`};
     ${({ $xl }) => $xl?.gapX && `column-gap: ${gapValue($xl.gapX)};`};
@@ -91,7 +93,7 @@ const GridContainer = styled.div<StyledGridContainerProps>`
   }
 
   // Desktops
-  @media (min-width: 1200px) {
+  @media (min-width: ${BREAKPOINTS.xxl}px) {
     ${({ $xxl }) =>
       $xxl?.cols && `grid-template-columns: repeat(${$xxl.cols}, 1fr);`};
     ${({ $xxl }) => $xxl?.gapX && `column-gap: ${gapValue($xxl.gapX)};`};

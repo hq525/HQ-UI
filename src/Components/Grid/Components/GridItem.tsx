@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { PropsWithChildren } from "react";
 
+import { BREAKPOINTS } from "../../../tokens";
+
 // Settings that should be available for every breakpoint
 interface GridItemSettings {
   colSpan?: number;
@@ -57,7 +59,7 @@ const GridItemContainer = styled.div<GridItemContainerProps>`
   ${({ $rowEnd }) => $rowEnd && `grid-row-end: ${$rowEnd};`}
 
   // Mobile
-  @media (max-width: 600px) {
+  @media (max-width: ${BREAKPOINTS.md}px) {
     ${({ $xs }) => $xs?.colSpan && `grid-column: span ${$xs.colSpan}`};
     ${({ $xs }) => $xs?.rowSpan && `grid-row: span ${$xs.rowSpan}`};
     ${({ $xs }) => $xs?.colStart && `grid-column-start: ${$xs.colStart}`};
@@ -67,7 +69,7 @@ const GridItemContainer = styled.div<GridItemContainerProps>`
   }
 
   // Portrait Tablets
-  @media (min-width: 600px) {
+  @media (min-width: ${BREAKPOINTS.md}px) {
     ${({ $md }) => $md?.colSpan && `grid-column: span ${$md.colSpan}`};
     ${({ $md }) => $md?.rowSpan && `grid-row: span ${$md.rowSpan}`};
     ${({ $md }) => $md?.colStart && `grid-column-start: ${$md.colStart}`};
@@ -77,7 +79,7 @@ const GridItemContainer = styled.div<GridItemContainerProps>`
   }
 
   // Landscape Tablets
-  @media (min-width: 768px) {
+  @media (min-width: ${BREAKPOINTS.lg}px) {
     ${({ $lg }) => $lg?.colSpan && `grid-column: span ${$lg.colSpan}`};
     ${({ $lg }) => $lg?.rowSpan && `grid-row: span ${$lg.rowSpan}`};
     ${({ $lg }) => $lg?.colStart && `grid-column-start: ${$lg.colStart}`};
@@ -87,7 +89,7 @@ const GridItemContainer = styled.div<GridItemContainerProps>`
   }
 
   // Laptops
-  @media (min-width: 992px) {
+  @media (min-width: ${BREAKPOINTS.xl}px) {
     ${({ $xl }) => $xl?.colSpan && `grid-column: span ${$xl.colSpan}`};
     ${({ $xl }) => $xl?.rowSpan && `grid-row: span ${$xl.rowSpan}`};
     ${({ $xl }) => $xl?.colStart && `grid-column-start: ${$xl.colStart}`};
@@ -97,7 +99,7 @@ const GridItemContainer = styled.div<GridItemContainerProps>`
   }
 
   // Desktops
-  @media (min-width: 1200px) {
+  @media (min-width: ${BREAKPOINTS.xxl}px) {
     ${({ $xxl }) => $xxl?.colSpan && `grid-column: span ${$xxl.colSpan}`};
     ${({ $xxl }) => $xxl?.rowSpan && `grid-row: span ${$xxl.rowSpan}`};
     ${({ $xxl }) => $xxl?.colStart && `grid-column-start: ${$xxl.colStart}`};

@@ -3,12 +3,25 @@
     "registry": "https://registry.npmjs.org"
   },
   "name": "@hq525/hq-ui",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "",
   "type": "module",
-  "main": "dist/index.cjs.js",
+  "main": "dist/index.cjs",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs"
+    },
+    "./tokens": {
+      "types": "./dist/tokens.d.ts",
+      "import": "./dist/tokens.es.js",
+      "require": "./dist/tokens.cjs"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "/dist"
   ],

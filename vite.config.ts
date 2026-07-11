@@ -6,9 +6,17 @@ import { peerDependencies } from "./package.json";
 export default defineConfig({
   build: {
     lib: {
-      entry: "./src/index.ts", // Specifies the entry point for building the library.
+      // Two entry points: the components, and the dependency-free design
+      // tokens (importable from build-time config via "@hq525/hq-ui/tokens").
+      entry: {
+        index: "./src/index.ts",
+        tokens: "./src/tokens.ts",
+      },
       name: "hq-ui", // Sets the name of the generated library.
-      fileName: (format) => `index.${format}.js`, // Generates the output file name based on the format.
+      // CJS output must use the .cjs extension: this package is "type":
+      // "module", so Node would treat a .js file as ESM and break require().
+      fileName: (format, entryName) =>
+        format === "es" ? `${entryName}.es.js` : `${entryName}.cjs`,
       formats: ["cjs", "es"], // Specifies the output formats (CommonJS and ES modules).
     },
     rollupOptions: {
