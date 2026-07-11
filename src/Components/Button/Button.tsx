@@ -10,13 +10,22 @@ export type ButtonProps = {
   onClick?: MouseEventHandler<HTMLButtonElement>;
 };
 
-const StyledButton = styled.button<ButtonProps>`
+// Transient ($-prefixed) props so styled-components does not
+// forward them to the underlying DOM element. "disabled" stays
+// as-is because it is a real button attribute.
+type StyledButtonProps = {
+  $primary?: boolean;
+  $size?: "small" | "medium" | "large";
+  disabled?: boolean;
+};
+
+const StyledButton = styled.button<StyledButtonProps>`
     border: 0;
     line-height: 1;
     font-size: ${(props) =>
-        props.size === "small"
+        props.$size === "small"
         ? "12px"
-        : props.size === "medium"
+        : props.$size === "medium"
         ? "14px"
         : "15px"};
     cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
@@ -24,16 +33,16 @@ const StyledButton = styled.button<ButtonProps>`
     border-radius: 5px;
     display: inline-block;
     color: #fff;
-    background-color: ${(props) => (props.primary ? BTN_PRIMARY : BTN_WARNING)};
+    background-color: ${(props) => (props.$primary ? BTN_PRIMARY : BTN_WARNING)};
     opacity: ${(props) => (props.disabled ? 0.5 : 1)};
     padding: ${(props) =>
-        props.size === "small"
+        props.$size === "small"
         ? "7px 18px 8px"
-        : props.size === "medium"
+        : props.$size === "medium"
         ? "9px 25px 11px"
         : "14px 30px 16px"};
     &:hover {
-        background-color: ${(props) => (props.primary ? (props.disabled ?  BTN_PRIMARY : BTN_PRIMARY_HOVER) : (props.disabled ? BTN_WARNING : BTN_WARNING_HOVER))};
+        background-color: ${(props) => (props.$primary ? (props.disabled ?  BTN_PRIMARY : BTN_PRIMARY_HOVER) : (props.disabled ? BTN_WARNING : BTN_WARNING_HOVER))};
     };
 `;
 
@@ -49,9 +58,9 @@ const Button: React.FC<ButtonProps> = ({
     <StyledButton
       type="button"
       onClick={onClick}
-      primary={primary}
+      $primary={primary}
       disabled={disabled}
-      size={size}
+      $size={size}
       {...props}
     >
       {text}
