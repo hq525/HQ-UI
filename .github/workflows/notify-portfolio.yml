@@ -1,0 +1,77 @@
+name: notify portfolio
+
+# When a new @hq525/hq-ui version lands on main AND is live on npm, tell the
+# portfolio repo to pull it in. Its Renovate workflow listens for the
+# hq-ui-published repository_dispatch event and auto-merges the bump.
+# This replaces the portfolio's hourly polling with a precise trigger.
+
+on:
+  push:
+    branches: [main]
+    paths: [package.json]
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      # Skip cleanly (green, not red) until PORTFOLIO_DISPATCH_TOKEN is set.
+      - name: Check for token
+        id: check
+        env:
+          PORTFOLIO_DISPATCH_TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$PORTFOLIO_DISPATCH_TOKEN" ]; then
+            echo "PORTFOLIO_DISPATCH_TOKEN not set — skipping until it is configured."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        if: steps.check.outputs.run == 'true'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect version change
+        id: ver
+        if: steps.check.outputs.run == 'true'
+        run: |
+          NEW=$(jq -r .version package.json)
+          OLD=$(git show HEAD~1:package.json 2>/dev/null | jq -r .version 2>/dev/null || echo "")
+          echo "previous=$OLD current=$NEW"
+          if [ -z "$NEW" ] || [ "$NEW" = "$OLD" ]; then
+            echo "No version change; nothing to do."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "version=$NEW" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Removes any push/publish ordering race: only dispatch once npm
+      # actually serves the new version (or give up after ~10 minutes).
+      - name: Wait for npm to serve the new version
+        if: steps.ver.outputs.changed == 'true'
+        run: |
+          TARGET="${{ steps.ver.outputs.version }}"
+          for i in $(seq 1 30); do
+            PUB=$(npm view @hq525/hq-ui version 2>/dev/null || echo "")
+            if [ "$PUB" = "$TARGET" ]; then
+              echo "npm is serving $TARGET."
+              exit 0
+            fi
+            echo "Waiting for npm to serve $TARGET ($i/30, currently: ${PUB:-none})"
+            sleep 20
+          done
+          echo "Timed out after ~10 min waiting for npm to serve $TARGET." >&2
+          exit 1
+
+      - name: Trigger portfolio update
+        if: steps.ver.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
+        run: |
+          gh api --method POST repos/hq525/Personal_Website/dispatches \
+            -f event_type=hq-ui-published
+          echo "Dispatched hq-ui-published to hq525/Personal_Website."
